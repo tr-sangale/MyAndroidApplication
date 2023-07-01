@@ -13,8 +13,11 @@ jobs:
       resource-class: xlarge
     steps:
       - checkout
-      - android/start-emulator-and-run-tests:
+      - run: 
+          name: change perm
           command: chmod +x ./gradlew
+          
+      - android/start-emulator-and-run-tests:
           test-command: ./gradlew connectedDebugAndroidTest
           system-image: system-images;android-30;google_apis;x86
 
