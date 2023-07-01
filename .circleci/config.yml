@@ -7,6 +7,10 @@ orbs:
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
   android-test:
+    parameters: # this is a parameter
+      system-image:
+        type: string
+        default: system-images;android-30;google_apis;x86
     executor:
       name: android/android-machine
       tag: "2023.04.1"
@@ -18,12 +22,25 @@ jobs:
           command: chmod +x ./gradlew
           
       - android/start-emulator-and-run-tests:
-          test-command: ./gradlew connectedDebugAndroidTest
-          system-image: system-images;android-30;google_apis;x86
+          test-command: ./gradlew --build-cache connectedDebugAndroidTest
+          system-image: << parameters.system-image >> # parameter being used
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
   android:
     jobs:
-      - android-test
+      - android-test:
+          matrix:
+            alias: android-test-all
+            parameters:
+              system-image:
+                - system-images;android-30;google_apis;x86
+                - system-images;android-29;google_apis;x86
+                - system-images;android-28;google_apis;x86
+                - system-images;android-27;google_apis;x86
+                - system-images;android-26;google_apis;x86
+                - system-images;android-26;google_apis;x86
+                - system-images;android-26;google_apis;x86
+                - system-images;android-26;google_apis;x86
+          name: android-test-<<matrix.system-image>>
